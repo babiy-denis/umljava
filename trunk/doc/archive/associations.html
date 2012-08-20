@@ -1,0 +1,63 @@
+<script>
+
+function man()
+{
+	this.name = ""
+	this.surname = ""
+}
+
+/////////////////////////  One-to-One
+function euWife(n,s)
+{		
+	this.husband = {} // instance of euHusband 
+	this.name = n
+	this.surname = s
+}
+
+
+function euHusband(n,s)
+{		
+	this.wife = {}  // instance of euWife
+	this.name = n
+	this.surname = s
+}
+
+euWife.prototype = new man();
+euHusband.prototype = new man();
+
+sarah = new euWife("Sarah", "O'Connor")
+john = new euHusband("John", "O'Connor")
+
+sarah.husband = john
+john.wife = sarah 
+
+
+
+document.write("Sarah husband is: "+sarah.husband.name)
+
+
+
+//////////////One-to-Multiple
+
+eaWife = euWife
+
+function eaHusband(n,s)
+{		
+	this.wife = [] // array of eaWife
+	this.name = n
+	this.surname = s
+}
+
+eaHusband.prototype = new man()
+
+Ahmed = new eaHusband("Ahmen", "Duah");
+
+Sina = new eaWife("Sina", "Duah")
+Lua =  new eaWife("Lua", "Duah")
+
+Ahmed.wife[0] = Sina
+Ahmed.wife[1] = Lua
+
+document.write("<br>Ahmed wifes is: "+Ahmed.wife[0].name + ", "+Ahmed.wife[1].name )
+
+</script>
