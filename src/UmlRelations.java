@@ -1,3 +1,5 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class UmlRelations
@@ -29,13 +31,14 @@ public class UmlRelations
 		private Set<Room> room = new HashSet<Room>();
 		private Department department;
 		private Set<PastPosition> pastPosition = new HashSet<PastPosition>();
+		// создаем и конструктор
 		public  Employee(String cName, String cSurname, String cPosition){
 			name = cName;
 			surname = cSurname;
 			position = cPosition;
 		}
 		public void setPosition(String newPosition){				
-				// сначала пдолжность заносим в список прежних должностей
+				// сначала должность заносим в список прежних должностей
 				PastPosition pastPosition = new PastPosition(this.getPosition(), this.getDepartment());				
 				this.setPastPosition(pastPosition);
 				// меняем должность
@@ -83,7 +86,7 @@ public class UmlRelations
 	}
 
 	public static class IdCard{
-		private String dateExpire;
+		private Date dateExpire;
 		private int number;
 		public IdCard(int n){
 			number = n;
@@ -94,10 +97,10 @@ public class UmlRelations
 		public int getNumber(){
 			return number;
 		}
-		public void setDateExpire(String newDateExpire){
+		public void setDateExpire(Date newDateExpire){
 			dateExpire = newDateExpire;
 		}
-		public String getDateExpire(){
+		public Date getDateExpire(){
 			return dateExpire;
 		}
 	}
@@ -166,8 +169,8 @@ public class UmlRelations
 	}
 	
 	public static class Menu{
-		private static int i=0;
-		public static void showEmployees(Employee[] employees){			
+		private int i=0;
+		public  void showEmployees(Employee[] employees){			
 			System.out.println("Список сотрудников:");
 			for (i=0; i<employees.length; i++){
 				if(employees[i] instanceof Employee){
@@ -188,7 +191,12 @@ public class UmlRelations
 		Employee director = new Employee("Федор", "Дубов", "Директор");
 		// IdCard
 		IdCard card = new IdCard(123);
-		card.setDateExpire("2010-12-01");
+		try {
+			card.setDateExpire(new SimpleDateFormat("yyyy-MM-dd").parse("2015-12-31"));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		sysEngineer.setIdCard(card);
 		// Room
 		Room room101 = new Room(101);
@@ -202,9 +210,9 @@ public class UmlRelations
 		sysEngineer.setPosition("Сторож");
 		// Output
 		System.out.println(sysEngineer.getName() +" работает в должности "+ sysEngineer.getPosition()); 
-		System.out.println("Удостовирение действует до " + sysEngineer.getIdCard().dateExpire); 
+		System.out.println("Удостовирение действует до " + new SimpleDateFormat("yyyy-MM-dd").format(sysEngineer.getIdCard().getDateExpire()) ); 
 		System.out.println("Может находиться в помещеньях:");
-		Iterator iter =  sysEngineer.getRoom().iterator();
+		Iterator<Room> iter =  sysEngineer.getRoom().iterator();
 		while(iter.hasNext()){
 			System.out.println( ((Room) iter.next()).getNumber());
 		}
@@ -212,15 +220,15 @@ public class UmlRelations
 		System.out.println("В отделе "+sysEngineer.getDepartment().name+" работает "
 						   +sysEngineer.getDepartment().getPersonCount()+" человек.");
 		System.out.println("В прошлом работал как:");		
-		iter =  sysEngineer.getPastPosition().iterator();
-		while(iter.hasNext()){
-			System.out.println( ((PastPosition) iter.next()).getName());
+		Iterator<PastPosition> iterPastPosition =  sysEngineer.getPastPosition().iterator();
+		while(iterPastPosition.hasNext()){
+			System.out.println( ((PastPosition) iterPastPosition.next()).getName());
 		}
 		// Menu
 		Menu menu = new Menu();
 		Employee employees[] = new Employee[10];
 		employees[0]= sysEngineer;
 		employees[1] = director;
-		Menu.showEmployees(employees);
+		menu.showEmployees(employees);
 	}
 }
