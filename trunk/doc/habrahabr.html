@@ -1,0 +1,374 @@
+<h5>Введение</h5>
+Диаграмма классов UML позволяет обозначать отношения между классами и их экземплярами, некоторые из которых не имеют явной поддержки в языках программирования. Для чего они нужны? Они нужны, например, для моделирования прикладной области. Но как они отражаются в программном коде? Данное небольшое исследование пытается ответить на этот вопрос и показать отношения между классами в коде.
+<habracut/>
+Сначала попробуем прояснить, как относятся друг к другу отношения между классами в UML. Используя различные источники удалось построить следующую структурную схему, демонстрирующую разновидности отношений:
+
+<img src="http://habrastorage.org/storage2/0d5/496/c84/0d5496c843e0a40016243d39c97870f6.png" align="center"/>
+Рис. 1 - Отношения между классами
+
+
+Ассоциации имеют навигацию: двунаправленную или однонаправленную, указывающую на направление связи. То есть у каждого вида ассоциации еще есть два подвида, которое на рисунке не показаны.
+
+<h5>1. Обобщение</h5>
+Итак, наша цель - построить UML-диаграмму классов (Class Model), а затем отразить ее в  объектно-ориентированном коде.
+
+В качестве прикладной области возьмем отдел кадров некого предприятия и начнем строить его модель. Для примеров будем использовать язык Java.
+
+Отношение обобщения - это наследование. Это отношение хорошо рассматривается в каждом учебнике какому-либо ООП языку. В языке Java имеет явную реализацию через расширение(extends) одного класса другим.
+
+<img src="http://habrastorage.org/storage2/a97/ed0/f9b/a97ed0f9b9bef0da044068fcf6e17b2d.png"/>
+Рис. 2 - Отношение обобщения
+
+Класс "Man"(человек) - более абстрактный, а "Employee"(сотрудник) более специализированный. Класс "Employee" наследует свойства и методы "Man".
+
+Попробуем написать код для этой диаграммы:
+<source lang="Java">
+public static class Man{
+protected String name;
+    protected String surname;
+    public void setName(String newName){
+        name = newName;
+    }
+    public String getName(){
+        return name;
+	}
+    public void setSurname(String newSurname){
+        name = newSurname;
+    }
+    public String getSurname(){
+        return surname;
+    }
+}
+// наследуем класс Man
+public static class Employee extends Man{
+    private String position;
+    // создаем и конструктор
+    public Employee(String n, String s, String p){
+        name = n;
+        surname = s;
+        position = p;
+    }
+    public void setPosition(String newProfession){
+        position = newProfession;
+    }
+    public String getPosition(){
+        return position;
+    }
+}
+</source>
+
+<h5>2. Ассоциация</h5>
+Ассоциация показывает отношения между объектами-экземплярами класса. 
+<h6>2.1 Бинарная</h6>
+В модель добавили класс "IdCard", представляющий идентификационную карточку(пропуск) сотрудника. Каждому сотруднику может соответствовать только одна идентификационная карточка, мощность связи 1 к 1.
+<img src="http://habrastorage.org/storage2/1f6/479/696/1f647969633192e38868a036989dcb50.png"/>
+Рис. 3 - Бинарная ассоциация
+
+Классы:
+<source lang="Java">
+public static class Employee extends Man{
+    private String position;
+    private IdCard iCard;
+    public Employee(String n, String s, String p){
+        name = n;
+        surname = s;
+        position = p;
+    }
+    public void setPosition(String newPosition){
+        position = newPosition;
+    }
+    public String getPosition(){
+        return position;
+    }
+    public void setIdCard(IdCard c){
+        iCard = c;
+    }
+    public IdCard getIdCard(){
+        return iCard;
+    }
+}
+public static class IdCard{
+	private Date dateExpire;
+	private int number;
+	public IdCard(int n){
+		number = n;
+	}
+	public void setNumber(int newNumber){
+		number = newNumber;
+	}
+	public int getNumber(){
+		return number;
+	}
+	public void setDateExpire(Date newDateExpire){
+		dateExpire = newDateExpire;
+	}
+	public Date getDateExpire(){
+		return dateExpire;
+	}
+}
+</source>
+
+В теле программы создаем объекты и связываем их:
+<source lang="Java">
+IdCard card = new IdCard(123);
+card.setDateExpire(new SimpleDateFormat("yyyy-MM-dd").parse("2015-12-31"));
+sysEngineer.setIdCard(card);
+System.out.println(sysEngineer.getName() +" работает в должности "+ sysEngineer.getPosition());
+System.out.println("Удостовирение действует до " + new SimpleDateFormat("yyyy-MM-dd").format(sysEngineer.getIdCard().getDateExpire()) );
+</source>
+
+Класс Employee имеет поле card, у которого тип IdCard, так же класс имеет методы для присваивания значения(setIdCard) этому полю и для
+получения значения(getIdCard). Из экземпляра объекта Employee мы можем узнать о связанном с ним объектом типа IdCard, значит
+навигация (стрелочка на линии) направлена от Employee к IdCard.
+
+<h5>2.2 N-арная ассоциация</h5>
+Представим, что в организации положено закреплять за работниками помещения. Добавляем новый класс Room.
+Каждому объекты работник(Employee) может соответствовать несколько рабочих помещений. Мощность связи один-ко-многим.
+Навигация от Employee к Room.
+<img src="http://habrastorage.org/storage2/adf/3af/046/adf3af046b78110c1e02476da10f1fbd.png"/>
+Рис. 4 - N-арная ассоциация
+
+Теперь попробуем отразить это в коде. Новый класс Room:
+<source lang="Java">
+public static class Room{
+     private int number;
+     public Room(int n){
+         number = n;
+     }
+     public void setNumber(int newNumber){
+         number = newNumber;
+     }
+     public int getNumber(){
+         return number;
+     }
+}
+</source>
+
+Добавим в класс Employee поле и методы для работы с Room:
+<source lang="Java">
+...
+private Set room = new HashSet();
+...
+public void setRoom(Room newRoom){
+    room.add(newRoom);
+}
+public Set getRoom(){
+    return room;
+}
+public void deleteRoom(Room r){
+    room.remove(r);
+}
+...
+</source>
+
+Пример использвания:
+<source lang="Java">
+public static void main(String[] args){
+
+    Employee sysEngineer = new Employee("John", "Connor", "Manager");
+    IdCard card = new IdCard(123);
+    card.setDateExpire(new SimpleDateFormat("yyyy-MM-dd").parse("2015-12-31"));
+	sysEngineer.setIdCard(card);
+	Room room101 = new Room(101);
+    Room room321 = new Room(321);
+    sysEngineer.setRoom(room101);
+    sysEngineer.setRoom(room321);
+    System.out.println(sysEngineer.getName() +" работает в должности "+ sysEngineer.getPosition());
+    System.out.println("Удостовирение действует до " + sysEngineer.getIdCard().dateExpire);
+    System.out.println("Может находиться в помещеньях:");
+    Iterator iter = sysEngineer.getRoom().iterator();
+    while(iter.hasNext()){
+         System.out.println( ((Room) iter.next()).getNumber());
+	}
+}
+</source>
+<h5>2.3 Агрегация</h5>
+Введем в модель класс Department(отдел) - наше предприятие структурировано по отделам. В каждом отделе может работать один или более человек. Можно сказать, что отдел включает в себя одного или более сотрудников и таким образом их агрегирует. На предприятии могут быть сотрудники, которые не принадлежат ни одному отделу, например, директор предприятия.
+<img src="http://habrastorage.org/storage2/7f2/6b6/f97/7f26b6f975a79dc1c83f114fdbba9980.png"/>
+Рис. 5 - Агрегация
+
+Класс Department:
+<source lang="Java">
+public static class Department{
+    private String name;
+    private Set employees = new HashSet();
+    public Department(String n){
+        name = n;
+    }
+    public void setName(String newName){
+        name = newName;
+    }
+    public String getName(){
+        return name;
+    }
+    public void addEmployee(Employee newEmployee){
+        employees.add(newEmployee);
+        // связываем сотрудника с этим отделом
+        newEmployee.setDepartment(this);
+    }
+    public Set getEmployees(){
+        return employees;
+    }
+    public void removeEmployee(Employee e){
+        employees.remove(e);
+    }
+}
+</source>
+
+Итак, наш класс, помимо конструктора и метода изменения имени отдела, имеет методы для занесения в отдел нового сотрудника, для удаления сотрудника и для получения всех сотрудников входящих в данный отдел. Навигация на диаграмме не показана, значит она является двунаправленной: от объекта типа "Department" можно узнать о сотруднике и от объекта типа "Employee" можно узнать к какому отделу он относится.
+
+Так как нам нужно легко узнавать какому отделу относится какой-либо сотрудник, то добавим в класс Employee поле и методы для назначения и получения отдела.
+
+<source lang="Java">
+...
+private Department department;
+...
+public void setDepartment(Department d){
+    department = d;
+}
+public Department getDepartment(){
+    return department;
+}
+</source>
+
+Использование:
+
+<source lang="Java">
+
+Department programmersDepartment = new Department("Программисты");
+programmersDepartment.addEmployee(sysEngineer);
+System.out.println("Относится к отделу "+sysEngineer.getDepartment().name);
+
+</source>
+<h6>2.3.1 Композиция</h6>
+Предположим, что одним из требований к нашей системе является требование о том, чтоб хранить данные о прежней занимаемой должности на предприятии.
+Введем новый класс "pastPosition". В него, помимо свойства "имя"(name), введем и свойство "department", которое свяжет его с классом "Department".
+
+Данные о прошлых занимаемых должностях являются частью данных о сотруднике, таким образом между ними связь целое-часть и в то же время, данные о прошлых должностях не могут существовать без объекта типа "Employee". Уничтожение объекта "Employee" должно привести к уничтожению объектов "pastPosition".
+<img src="http://habrastorage.org/storage2/67b/9ef/2d8/67b9ef2d84efb251d5fdc804343126e0.png"/>
+Рис. 6 - Композиция
+
+Класс "PastPosition":
+<source lang="Java">
+private static class PastPosition{
+    private String name;
+     private Department department;
+     public PastPosition(String position, Department dep){
+         name = position;
+         department = dep;
+     }
+     public void setName(String newName){
+         name = newName;
+     }
+     public String getName(){
+         return name;
+     }
+     public void setDepartment(Department d){
+         department = d;
+     }
+     public Department getDepartment(){
+         return department;
+     }
+}
+</source>
+В класс Employee добавим свойства и методы для работы с данными о прошлой должности:
+<source lang="Java">
+...
+private Set pastPosition = new HashSet();
+...
+public void setPastPosition(PastPosition p){
+     pastPosition.add(p);
+}
+public Set getPastPosition(){
+     return pastPosition;
+}
+public void deletePastPosition(PastPosition p){
+     pastPosition.remove(p);
+}
+...
+</source>
+
+Применение:
+<source lang="Java">
+// изменяем должность
+sysEngineer.setPosition("Сторож");
+// смотрим ранее занимаемые должности:
+System.out.println("В прошлом работал как:");
+Iterator iter = sysEngineer.getPastPosition().iterator();
+while(iter.hasNext()){
+	System.out.println( ((PastPosition) iter.next()).getName());
+}
+</source>
+
+<h5>3. Зависимость</h5>
+Для организации диалога с пользователем введем в систему класс "Menu". Встроим один метод "showEmployees", который показывает список сотрудников и их должности. Параметром для метода является массив объектов "Employee". Таким образом, изменения внесенные в класс "Employee" могут потребовать и изменения класса "Menu".
+<img src="http://habrastorage.org/storage2/f7b/ef5/623/f7bef5623ce92020b74ab437061cbaaa.png"/>
+Рис. 7 - Зависимость
+
+Заметим, что класс "Menu" не относится к прикладной области, а представляет собой "системный" класс воображаемого приложения.
+Класс "Menu":
+<source lang="Java">
+public static class Menu{
+    private static int i=0;
+    public static void showEmployees(Employee[] employees){
+        System.out.println("Список сотрудников:");
+        for (i=0; i<employees.length; i++){
+            if(employees[i] instanceof Employee){
+                System.out.println(employees[i].getName() +" - " + employees[i].getPosition());
+			}
+		}
+    }
+}
+</source>
+
+Использование:
+<source lang="Java">
+// добавим еще одного сотрудника
+Employee director = new Employee("Федор", "Дубов", "Директор");
+Menu menu = new Menu();
+Employee employees[] = new Employee[10];
+employees[0]= sysEngineer;
+employees[1] = director;
+Menu.showEmployees(employees);
+</source>
+<h5>4. Реализация</h5>
+Реализация, как и наследование имеет явное выражение в языке Java: объявление интерфейса и возможность его реализации каким-либо классом.
+
+Для демонстрации отношения "реализация" создадим интерфейс "Unit". Если представить, что организация может делиться не только на отделы, а например, на цеха, филиалы и т.д. Интерфейс "Unit" представляет собой самую абстрактную единицу деления. В каждой единице деления работает какое-то количество сотрудников, поэтому метод для получения количества работающих людей будет актуален для каждого класса реализующего интерфейс "Unit".
+
+<img src="http://habrastorage.org/storage2/c11/48a/4c4/c1148a4c4e7d50d950a1931eac0a9200.png"/>
+Рис. 8 - Реализация
+
+Интерфейс "Unit":
+
+<source lang="Java">
+public interface Unit{
+     int getPersonCount();
+}
+</source>
+Реализация в классе "Department":
+<source lang="Java">
+public static class Department implements Unit{
+    ...
+    public int getPersonCount(){
+        return getEmployees().size();
+    }
+</source>
+
+Применение:
+<source lang="Java">
+System.out.println("В отделе "+sysEngineer.getDepartment().name+" работает "
++sysEngineer.getDepartment().getPersonCount()+" человек.");
+</source>
+
+Как видим, реализация метода "getPersonCount" не совсем актуальна для класса "Department", так как он имеет метод "getEmployees", который возвращает
+коллекцию объектов "Employee".
+
+Код полностью: http://umljava.googlecode.com/files/UmlRelations.java
+
+<h5>Выводы</h5>
+Язык моделирования UML имеет набор отношений для построения модели классов , но даже такой развитой ООП язык, как Java имеет только две явные конструкции для отражения связей: extends(расширение) и interface/implements(реализация).
+В результате моделирования получили следующую диаграмму:
+
+<img src="http://wp-zesetup.rhcloud.com/wp-content/uploads/2012/08/9.png"/>
+Рис. 8 - Диаграмма классов
