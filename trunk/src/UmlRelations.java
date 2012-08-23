@@ -4,7 +4,7 @@ import java.util.*;
 
 public class UmlRelations
 {	
-	public static class Man{
+	public  class Man{
 		protected String name;
 		protected String surname;				
 		public void setName(String newName){
@@ -25,7 +25,7 @@ public class UmlRelations
 	}	 
 	
 	// наследуем класс Man
-	public static class Employee extends Man{
+	public  class Employee extends Man{
 		private String position;
 		private IdCard iCard;
 		private Set<Room> room = new HashSet<Room>();
@@ -147,7 +147,7 @@ public class UmlRelations
 		}
 	}
 	
-	private static class PastPosition{
+	private  class PastPosition{
 		private String name;
 		private Department department;
 		public PastPosition(String position, Department dep){
@@ -168,7 +168,7 @@ public class UmlRelations
 		}
 	}
 	
-	public static class Menu{
+	public  class Menu{
 		private int i=0;
 		public  void showEmployees(Employee[] employees){			
 			System.out.println("Список сотрудников:");
@@ -183,7 +183,7 @@ public class UmlRelations
 	public interface Unit{
 		int getPersonCount();
 	}
-	public static void main(String[] args){
+	public  void main(String[] args){
 		// Employee
 		Employee sysEngineer = new Employee("Жора", "Кустов", "Управделами");
 		sysEngineer.setPosition("Инженер");
