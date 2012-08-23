@@ -3,106 +3,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class UmlRelations
-{
-	
-	public  class IdCard{
-		private Date dateExpire;
-		private int number;
-		public IdCard(int n){
-			number = n;
-		}
-		public void setNumber(int newNumber){
-			number = newNumber;
-		}
-		public int getNumber(){
-			return number;
-		}
-		public void setDateExpire(Date newDateExpire){
-			dateExpire = newDateExpire;
-		}
-		public Date getDateExpire(){
-			return dateExpire;
-		}
-	}
-	
-	
-	public class Room{
-		private int number;
-		public Room(int n){
-			number = n;
-		}
-		public void setNumber(int newNumber){
-			number = newNumber;
-		}
-		public int getNumber(){
-			return number;
-		}
-	}
-	
-	public  class Department implements Unit{
-		private String name;
-		private Set<Employee> employees = new HashSet<Employee>();
-		public Department(String n){
-			name = n;
-		}
-		public void setName(String newName){
-			name = newName;
-		}
-		public String getName(){
-			return name;
-		}
-		public void  addEmployee(Employee newEmployee){
-			employees.add(newEmployee);
-			// связываем сотрудника с этим отделом
-			newEmployee.setDepartment(this); 
-		}
-		public Set<Employee>  getEmployees(){
-			return employees;
-		}
-		public void  removeEmployee(Employee e){
-			employees.remove(e);
-		}
-		public int getPersonCount(){
-			return getEmployees().size();
-		}
-	}
-	
-	private  class PastPosition{
-		private String name;
-		private Department department;
-		public PastPosition(String position, Department dep){
-			name = position;
-			department = dep;
-		}
-		public void setName(String newName){
-			name = newName;
-		}
-		public String getName(){
-			return name;
-		}
-		public void setDepartment(Department d){
-			department = d;
-		}
-		public Department getDepartment(){
-			return department;
-		}
-	}
-	
-	public  class Menu{
-		private int i=0;
-		public  void showEmployees(Employee[] employees){			
-			System.out.println("Список сотрудников:");
-			for (i=0; i<employees.length; i++){
-				if(employees[i] instanceof Employee){
-					System.out.println(employees[i].getName() +" - " + employees[i].getPosition());
-				}
-			}
-		}
-	}
-	
-	public interface Unit{
-		int getPersonCount();
-	}
+{		
 	public  static  void main(String[] args){
 		// Employee
 		Employee sysEngineer = new Employee("Жора", "Кустов", "Управделами");
@@ -136,8 +37,8 @@ public class UmlRelations
 		while(iter.hasNext()){
 			System.out.println( ((Room) iter.next()).getNumber());
 		}
-		System.out.println("Относится к   отделу "+sysEngineer.getDepartment().name);
-		System.out.println("В отделе "+sysEngineer.getDepartment().name+" работает "
+		System.out.println("Относится к   отделу "+sysEngineer.getDepartment().getName());
+		System.out.println("В отделе "+sysEngineer.getDepartment().getName()+" работает "
 						   +sysEngineer.getDepartment().getPersonCount()+" человек.");
 		System.out.println("В прошлом работал как:");		
 		Iterator<PastPosition> iterPastPosition =  sysEngineer.getPastPosition().iterator();
