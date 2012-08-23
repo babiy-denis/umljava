@@ -1,4 +1,3 @@
-package UmlRelations; 
 import java.util.HashSet;
 import java.util.Set;
 
