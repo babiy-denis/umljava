@@ -3,89 +3,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class UmlRelations
-{	
-	public  class Man{
-		protected String name;
-		protected String surname;				
-		public void setName(String newName){
-			name = newName;			
-		}
-		public String getName(){
-			return name;
-
-		}
-		public void setSurname(String newSurname){
-			name = newSurname;			
-		}
-		
-		public String getSurname(){
-			return surname;
-
-		}
-	}	 
+{
 	
-	// наследуем класс Man
-	public  class Employee extends Man{
-		private String position;
-		private IdCard iCard;
-		private Set<Room> room = new HashSet<Room>();
-		private Department department;
-		private Set<PastPosition> pastPosition = new HashSet<PastPosition>();
-		// создаем и конструктор
-		public  Employee(String cName, String cSurname, String cPosition){
-			name = cName;
-			surname = cSurname;
-			position = cPosition;
-		}
-		public void setPosition(String newPosition){				
-				// сначала должность заносим в список прежних должностей
-				PastPosition pastPosition = new PastPosition(this.getPosition(), this.getDepartment());				
-				this.setPastPosition(pastPosition);
-				// меняем должность
-				position = newPosition;
-		}
-		public String getPosition(){
-				return position;
-		}
-		public void setIdCard(IdCard c){
-			iCard = c;
-		}
-		public IdCard getIdCard(){
-			return iCard;
-		}
-		public void setRoom(Room newRoom){
-			room.add(newRoom);
-		}
-		public Set<Room>  getRoom(){
-			return room;
-		}
-		
-		public void  deleteRoom(Room r){
-			room.remove(r);
-		}
-		
-		public void setDepartment(Department d){
-			department = d;
-		}
-		
-		public Department getDepartment(){
-			return department;
-		}
-		
-		public void setPastPosition(PastPosition p){
-			pastPosition.add(p);
-		}
-		
-		public Set<PastPosition>  getPastPosition(){
-			return pastPosition;
-		}
-		
-		public void deletePastPosition(PastPosition p){
-			pastPosition.remove(p);
-		}
-	}
-
-	public static class IdCard{
+	public  class IdCard{
 		private Date dateExpire;
 		private int number;
 		public IdCard(int n){
@@ -106,7 +26,7 @@ public class UmlRelations
 	}
 	
 	
-	public static class Room{
+	public class Room{
 		private int number;
 		public Room(int n){
 			number = n;
@@ -119,7 +39,7 @@ public class UmlRelations
 		}
 	}
 	
-	public static class Department implements Unit{
+	public  class Department implements Unit{
 		private String name;
 		private Set<Employee> employees = new HashSet<Employee>();
 		public Department(String n){
@@ -183,7 +103,7 @@ public class UmlRelations
 	public interface Unit{
 		int getPersonCount();
 	}
-	public  void main(String[] args){
+	public  static  void main(String[] args){
 		// Employee
 		Employee sysEngineer = new Employee("Жора", "Кустов", "Управделами");
 		sysEngineer.setPosition("Инженер");
